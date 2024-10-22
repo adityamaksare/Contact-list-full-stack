@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import ContactList from "./ContactList";
-import "./App.css";
 import ContactForm from "./ContactForm";
+import "bootstrap/dist/css/bootstrap.min.css"; // Importing Bootstrap
 
 function App() {
   const [contacts, setContacts] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [currentContact, setCurrentContact] = useState({})
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentContact, setCurrentContact] = useState({});
 
   useEffect(() => {
-    fetchContacts()
+    fetchContacts();
   }, []);
 
   const fetchContacts = async () => {
@@ -19,36 +19,67 @@ function App() {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    setCurrentContact({})
-  }
+    setIsModalOpen(false);
+    setCurrentContact({});
+  };
 
   const openCreateModal = () => {
-    if (!isModalOpen) setIsModalOpen(true)
-  }
+    setCurrentContact({});
+    setIsModalOpen(true);
+  };
 
   const openEditModal = (contact) => {
-    if (isModalOpen) return
-    setCurrentContact(contact)
-    setIsModalOpen(true)
-  }
+    setCurrentContact(contact);
+    setIsModalOpen(true);
+  };
 
   const onUpdate = () => {
-    closeModal()
-    fetchContacts()
-  }
+    closeModal();
+    fetchContacts();
+  };
 
   return (
     <>
-      <ContactList contacts={contacts} updateContact={openEditModal} updateCallback={onUpdate} />
-      <button onClick={openCreateModal}>Create New Contact</button>
-      {isModalOpen && <div className="modal">
-        <div className="modal-content">
-          <span className="close" onClick={closeModal}>&times;</span>
-          <ContactForm existingContact={currentContact} updateCallback={onUpdate} />
-        </div>
+      <ContactList
+        contacts={contacts}
+        updateContact={openEditModal}
+        updateCallback={onUpdate}
+      />
+
+      {/* Centering the button with Bootstrap utility classes */}
+      <div className="d-flex justify-content-center mb-4">
+        <button onClick={openCreateModal} className="btn btn-primary">
+          Create New Contact
+        </button>
       </div>
-      }
+
+      {isModalOpen && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Contact Form</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <ContactForm
+                  existingContact={currentContact}
+                  updateCallback={onUpdate}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
